@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateAllTables extends Migration
+class Createalltables extends Migration
 {
     /**
      * Run the migrations.
@@ -23,6 +23,7 @@ class CreateAllTables extends Migration
 
         Schema::create('products', function (Blueprint $table) {
             $table->id();
+            $table->integer('user_id');
             $table->string('title');
             $table->string('description')->nullable();
             $table->string('price');
@@ -30,8 +31,9 @@ class CreateAllTables extends Migration
             $table->timestamps();
         });
 
-        Schema::create('Endereco', function (Blueprint $table) {
+        Schema::create('enderecos', function (Blueprint $table) {
             $table->id();
+            $table->integer('user_id');
             $table->string('endereco');
             $table->string('bairro');
             $table->string('telefone');

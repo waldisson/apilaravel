@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 
 use App\Models\User;
+use App\Models\Endereco;
 
 class AuthController extends Controller
 {
@@ -64,7 +65,7 @@ class AuthController extends Controller
             $newEndereco->save();
         }
 
-        $token = Auth::attempt([
+        $token = auth()->attempt([
             'email' => $email,
             'password' => $password
         ]);
