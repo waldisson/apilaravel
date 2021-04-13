@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 
 use App\Models\User;
-use App\Models\Endereco;
+
 
 class AuthController extends Controller
 {
@@ -26,11 +26,7 @@ class AuthController extends Controller
             'name' => 'required',
             'email' => 'required|email|unique:users,email',
             'password' => 'required',
-            'password_confirm' => 'required|same:password',
-            'endereco' => 'required',
-            'bairro' => 'required',
-            'telefone' => 'required',
-            'cep' => 'required'
+            'password_confirm' => 'required|same:password'
         ]);
 
         if ($validator->fails()) {
@@ -41,12 +37,7 @@ class AuthController extends Controller
         $name = $request->input('name');
         $email = $request->input('email');
         $password = $request->input('password');
-        $endereco = $request->input('endereco');
-        $telefone = $request->input('telefone');
-        $cep = $request->input('cep');
-        $bairro = $request->input('bairro');
-
-
+       
         $hash = password_hash($password, PASSWORD_DEFAULT);
 
         $newUser = new User();
@@ -55,20 +46,16 @@ class AuthController extends Controller
         $newUser->password = $hash;
         $newUser->save();
 
-        if ($newUser) {
-            $newEndereco = new Endereco();
-            $newEndereco->user_id = $newUser->id;
-            $newEndereco->endereco = $endereco;
-            $newEndereco->telefone = $telefone;
-            $newEndereco->cep = $cep;
-            $newEndereco->bairro = $bairro;
-            $newEndereco->save();
-        }
+       
 
-        $token = auth()->attempt([
+        //enviando para login
+
+        $token = Auth::attempt([
             'email' => $email,
             'password' => $password
         ]);
+        
+        //verificado se houve erro ao logar
 
         if (!$token) {
             $array['error'] = 'Ocorreu um erro.';
@@ -76,6 +63,66 @@ class AuthController extends Controller
         }
 
         $array['token'] = $token;
+
+        //associando os dados ao usuário
+        
+        $user = auth()->user();
+        $array['user'] = $user;
+        
+
+        return $array;
+    }
+
+    public function login(Request $request) {
+        $array = ['error' => ''];
+        
+        $validator = Validator::make($request->all(),[
+            'email' => 'required',
+            'password' => 'required'
+        ]);
+        if(!$validator->fails()) {
+            $email = $request->input('email');
+            $password = $request->input('password');
+
+            $token = Auth::attempt([
+                'email' => $email,
+                'password' => $password
+            ]);
+            
+            //verificado se houve erro ao logar
+    
+            if (!$token) {
+                $array['error'] = 'E-mail e/ou Senha estão incorretos!';
+                return $array;
+            }
+    
+            $array['token'] = $token;
+    
+            //associando os dados ao usuário
+            
+            $user = auth()->user();
+            $array['user'] = $user;
+        }else {
+            $array['error'] = $validator->errors()->first();
+            return $array;
+        }
+
+
+        return $array;
+    }
+
+    public function validateToken() {
+        $array = ['error' => ''];
+
+        $user = auth()->user();
+        $array['user'] = $user;
+
+        return $array;
+    }
+
+    public function logout() {
+        $array = ['error' => ''];
+        auth()->logout();
 
         return $array;
     }

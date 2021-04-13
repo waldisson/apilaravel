@@ -22,4 +22,8 @@ class User extends Authenticatable implements JWTSubject
    public function getJWTCustomClaims() {
        return [];
    }
+
+    public function endereco(){
+        return $this->hasMany(Endereco::class, 'user_id');
+    }
 }
