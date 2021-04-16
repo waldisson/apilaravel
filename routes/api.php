@@ -28,8 +28,10 @@ Route::middleware('auth:api')->group(function(){
     Route::get('/users',[UserController::class, 'read']);
     
     // Endereços
-    Route::post('/address/{id}',[EnderecoController::class, 'address']);
+    Route::post('/address',[EnderecoController::class, 'createAddress']);
+    Route::get('/address/ver/{id}',[EnderecoController::class, 'getAddress']);
     Route::delete('/address/{id}',[EnderecoController::class, 'removeAddress']);
+    Route::put('/address/{id}',[EnderecoController::class, 'putAddress']);
 
     // Produtos
     Route::get('/products',[ProductsController::class, 'products']);
